@@ -1,0 +1,44 @@
+@charset "UTF-8";
+#withdraw-btn {
+	background: #B2B2B2;
+	border: 2px solid #B2B2B2;
+}
+
+#withdraw-btn:hover {
+	background: #DB4455;
+}
+
+
+.pop-layer .pop-container {
+	padding: 20px 25px;
+}
+
+.pop-laeyr h4.ctxt {
+	line-height: 35px;
+	font-weight : bold;
+	font-size : 1.2em;
+}
+
+.pop-layer .btn-r {
+	width: 100%;
+	padding : 5px;
+	border-top: 1px solid #ddd;
+	text-align: right;
+}
+
+.btn-r button{
+	font-size : 1.1em;
+}
+
+
+.pop-layer {
+	display: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 410px;
+	height: auto;
+	background-color: #fff;
+	border: 5px solid #B24444;
+	z-index: 10;
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="readingRoomMapper">
+
+	<resultMap type="ReadingRoom" id="readingRoomResultMap">
+		<id property="rReservationNo" column="R_RESERVATION_NO"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="rReservationDate" column="R_RESERVATION_DATE"/>
+		<result property="rReservationTime" column="R_RESERVATION_TIME"/>
+		<result property="seatNo" column="SEAT_NO"/>
+		<result property="count" column="COUNT"/>
+	</resultMap>
+	
+<!-- 열람실 예약 -->
+	<insert id="insertReadingRoom" parameterType="ReadingRoom">
+		INSERT INTO READINGROOM VALUES(SEQ_RNUM.NEXTVAL, #{userId}, SYSDATE, #{rReservationTime}, #{seatNo}  )
+	</insert>
+	
+<!-- 열람실 현황 -->
+	<select id="selectAllReadingRoom" resultMap="readingRoomResultMap">
+		SELECT SEAT_NO, COUNT(*) AS COUNT FROM READINGROOM WHERE R_RESERVATION_DATE >= TO_CHAR(SYSDATE, 'YYYY-MM-DD') GROUP BY SEAT_NO HAVING COUNT(*) >0 
+	</select>
+	
+<!-- 좌석 번호로 조회 후 시간 확인 -->
+	<select id="selectSeatStatus" resultMap="readingRoomResultMap">
+		SELECT * FROM READINGROOM WHERE SEAT_NO = #{seatNo} AND R_RESERVATION_DATE >= TO_CHAR(SYSDATE,'YYYY-MM-DD')
+	</select>
+	
+<!-- 열람실 예약 취소 -->
+	<delete id="deleteReadingRoom" parameterType="_int">
+		DELETE FROM READINGROOM WHERE R_RESERVATION_NO = #{rReservationNo}
+	</delete>
+	
+</mapper>

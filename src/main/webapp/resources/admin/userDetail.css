@@ -1,0 +1,82 @@
+@charset "UTF-8";
+* {
+	margin: 0;
+	padding: 0;
+}
+
+main {
+	padding-top: 176px;
+    padding-bottom: 530px;
+    margin-bottom: 500px;
+    height: 820px;
+}
+
+.mainTitle {
+	font-size: 34px;
+    text-align: center;
+    margin-bottom: 36px;
+    margin-left: 23px;
+}
+
+.mainContents {
+	width: 100%;
+    max-width: 46%;
+    position: absolute;
+    left: 531px;
+    top: 192px;
+}
+
+/* .userDetailDiv{
+	margin-right: -110px;
+} */
+
+.profile {
+	border: 1px solid #bbb;
+	width: 145px;
+    height: 179px;
+    position: absolute;
+    left: -150px;
+}
+
+.lendingBookListPaging {
+	position: absolute;
+    left: 303px;
+}
+
+.side {
+	width: 200px;
+	position: absolute;
+	left: 3%;
+	top: 25%;
+}
+
+.side ul li {
+	line-height: 50px;
+	text-align: center;
+	border: 1px solid rgb(181, 181, 181);
+	text-decoration: none;
+	list-style: none;
+	font-size: 1.5rem;
+	cursor: pointer;
+}
+
+.side ul li:first-child {
+	line-height: 80px;
+	font-weight: bold;
+	font-size: 2rem;
+	background-color: #5a5eb9;
+	color: #fff;
+	cursor: Default;
+}
+
+.side ul .lo:hover {
+	background-color: rgb(155, 158, 213);
+	color: #fff;
+	font-weight: bold;
+}
+
+.sideact {
+	background-color: rgb(155, 158, 213);
+	color: #fff;
+	font-weight: bold;
+}

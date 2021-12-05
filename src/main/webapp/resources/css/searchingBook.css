@@ -1,0 +1,50 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.search {
+    font-size: 16px;
+    width: 325px;
+    height: 40px;
+    padding: 10px;
+    border: 1px;
+    outline: #2e4f85;
+    float: left;
+    border: 1px solid #2e4f85;
+}
+
+.s__button {
+    width: 50px;
+    height: 40px;
+    border: 0px;
+    background: #2e4f85;
+    color: whitesmoke;
+    float: left;
+    cursor: pointer;
+}
+
+button .sub__btt {
+    font-family: inherit;
+    font-size: 20px;
+    width: 100px;
+    height: 80px;
+    border: 0px;
+    background: #2e4f85;
+    border-radius: 5px;
+    color: whitesmoke;
+    cursor: pointer;
+    line-height: inherit;
+    margin: 10px;
+}
+
+.book__cover {
+    width: 130px;
+}
+
+.search__select {
+    text-align: center;
+    float: left;
+    height: 40px;
+    width: 150px;
+}

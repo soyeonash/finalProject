@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="studyRoomMapper">
+
+	<resultMap type="StudyRoom" id="studyRoomResultMap">
+		<id property="sReservationNo" column="S_RESERVATION_NO"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="sReservationDate" column="S_RESERVATION_DATE"/>
+		<result property="sReservationTime" column="S_RESERVATION_TIME"/>
+		<result property="purpose" column="PURPOSE"/>
+		<result property="personnel" column="PERSONNEL"/>
+	</resultMap>
+
+<!-- 스터디룸 예약 -->
+	<insert id="insertStudyRoom" parameterType="StudyRoom">
+		INSERT INTO STUDYROOM VALUES(SEQ_SNUM.NEXTVAL, #{userId}, #{sReservationDate}, #{sReservationTime}, #{purpose}, #{personnel})
+	</insert> 
+	
+<!-- 스터디룸 예약 취소 -->
+	<delete id="deleteStudyRoom" parameterType="_int">
+		DELETE FROM STUDYROOM WHERE S_RESERVATION_NO = #{sReservationNo}
+	</delete>
+	
+<!-- 날짜 선택 후 예약 시간 조회 -->
+	<select id="selectStudyRoom" resultMap="studyRoomResultMap">
+		SELECT * FROM STUDYROOM WHERE S_RESERVATION_DATE = #{sReservationDate}
+	</select>
+
+</mapper>

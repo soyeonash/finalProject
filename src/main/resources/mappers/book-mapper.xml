@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bookMapper">
+	<resultMap type="Book" id="bookResultMap">
+		<id property="bookNo" column="BOOK_NO"/>
+		<result property="bookName" column="BOOK_NAME"/>
+		<result property="bookWriter" column="BOOK_WRITER"/>
+		<result property="bookSubject" column="BOOK_SUBJECT"/>
+		<result property="publisher" column="PUBLISHER"/>
+		<result property="bookYear" column="BOOK_YEAR"/>
+		<result property="callNo" column="CALL_NO"/>
+		<result property="isbn" column="ISBN"/>
+		<result property="bookCover" column="BOOK_COVER"/>
+		<result property="theme" column="THEME"/>
+		<result property="bookState" column="BOOK_STATE"/>
+		<result property="updateDate" column="UPDATE_DATE"/>
+		<result property="lendingCount" column="LENDING_COUNT"/>
+	</resultMap>
+	<!-- 인기 키워드 적립용 -->
+	<resultMap type="Keyword" id="keywordResultMap">
+		<result property="keyword" column="KEYWORD"/>
+		<result property="searchDate" column="SEARCH_DATE"/>
+	</resultMap>
+	<!-- 검색 키워드 저장 -->
+	<insert id="insertKeyword" parameterType="Search">
+		INSERT INTO POPULAR_KEYWORD VALUES(#{searchValue},DEFAULT)
+	</insert>
+	<!-- 인기 키워드 출력 -->
+	<select id="popKeyword" resultMap="keywordResultMap">
+		SELECT KEYWORD FROM(SELECT KEYWORD, COUNT(KEYWORD), ROW_NUMBER() OVER(ORDER BY COUNT(KEYWORD) DESC)RN FROM POPULAR_KEYWORD GROUP BY KEYWORD) <![CDATA[WHERE RN <= 10]]>
+	</select>
+	<!-- 간략 검색 -->
+	<select id="selectSearchSimple" resultMap="bookResultMap">
+		SELECT * FROM BOOK
+		<if test="searchCondition.toString() == 'title'">
+			WHERE BOOK_NAME LIKE '%' || #{ searchValue } || '%'
+		</if>
+		<if test="searchCondition.toString() == 'writer'">
+			WHERE BOOK_WRITER LIKE '%' || #{ searchValue } || '%'
+		</if>
+		<if test="searchCondition.toString() == 'publisher'">
+			WHERE PUBLISHER LIKE '%' || #{ searchValue } || '%'
+		</if>
+		ORDER BY UPDATE_DATE DESC
+	</select>
+	<!-- 페이징 처리 -->
+	<select id="selectListCount1" resultType="_int">
+		SELECT COUNT(*) FROM BOOK
+		<if test="searchCondition.toString() == 'title'">
+			WHERE BOOK_NAME LIKE '%' || #{ searchValue } || '%'
+		</if>
+		<if test="searchCondition.toString() == 'writer'">
+			WHERE BOOK_WRITER LIKE '%' || #{ searchValue } || '%'
+		</if>
+		<if test="searchCondition.toString() == 'publisher'">
+			WHERE PUBLISHER LIKE '%' || #{ searchValue } || '%'
+		</if>
+	</select>
+	<!-- 상세 검색 -->
+	<select id="selectSearchDetail" resultMap="bookResultMap">
+		SELECT * FROM BOOK WHERE
+		<if test="searchValue1 != ''">
+			BOOK_NAME LIKE '%' || #{ searchValue1 } || '%'
+		</if>
+		<if test="searchValue2 != ''">
+			AND BOOK_WRITER LIKE '%' || #{ searchValue2 } || '%'
+		</if>
+		<if test="searchValue3 != ''">
+			AND PUBLISHER LIKE '%' || #{ searchValue3 } || '%'
+		</if>
+		<if test="searchValue4 != ''">
+			AND ISBN LIKE '%' || #{ searchValue4 } || '%'
+		</if>
+		<if test="searchValue5 != ''">
+			AND BOOK_YEAR LIKE '%' || #{ searchValue5 } || '%'
+		</if>
+		ORDER BY UPDATE_DATE DESC
+	</select>
+	<!-- 페이징 처리 -->
+	<select id="selectListCount2" resultType="_int">
+		SELECT COUNT(*) FROM BOOK WHERE
+		<if test="searchValue1 != ''">
+			BOOK_NAME LIKE '%' || #{ searchValue1 } || '%'
+		</if>
+		<if test="searchValue2 != ''">
+			AND BOOK_WRITER LIKE '%' || #{ searchValue2 } || '%'
+		</if>
+		<if test="searchValue3 != ''">
+			AND PUBLISHER LIKE '%' || #{ searchValue3 } || '%'
+		</if>
+		<if test="searchValue4 != ''">
+			AND ISBN LIKE '%' || #{ searchValue4 } || '%'
+		</if>
+		<if test="searchValue5 != ''">
+			AND BOOK_YEAR LIKE '%' || #{ searchValue5 } || '%'
+		</if>
+	</select>
+	<!-- 주제별 검색 -->
+	<select id="selectSearchSub" resultMap="bookResultMap">
+		SELECT * FROM BOOK WHERE BOOK_SUBJECT = #{ searchValue }
+	</select>
+	<!-- 페이징 처리 -->
+	<select id="selectListCount3" resultType="_int">
+		SELECT COUNT(*) FROM BOOK WHERE BOOK_SUBJECT = #{ searchValue }
+	</select>
+	<!-- 신착 도서 -->
+	<select id="selectPrintNew" resultMap="bookResultMap">
+		SELECT ROWNUM, B.* FROM (SELECT N.* FROM BOOK N ORDER BY N.BOOK_NO DESC)B WHERE ROWNUM BETWEEN 1 AND 10
+	</select>
+	<!-- 인기 대출 도서 -->
+	<select id="selectBestBook" resultMap="bookResultMap">
+		SELECT ROWNUM, B.* FROM (SELECT P.* FROM BOOK P WHERE LENDING_COUNT > 0 ORDER BY P.LENDING_COUNT DESC)B WHERE ROWNUM BETWEEN 1 AND 10
+	</select>
+	<!-- 도서 상세 조회 -->
+	<select id="selectOne" resultMap="bookResultMap">
+		SELECT * FROM BOOK WHERE BOOK_NO = #{ bookNo }
+	</select>
+
+	<!-- 대출 시 도서 상태 변경-->
+	<update id="updateLendingBook" parameterType="Book">
+		UPDATE BOOK SET BOOK_STATE = '대출불가', LENDING_COUNT = LENDING_COUNT + 1 WHERE BOOK_NO = #{ bookNo } AND BOOK_STATE = '대출가능'
+	</update>
+	
+</mapper>

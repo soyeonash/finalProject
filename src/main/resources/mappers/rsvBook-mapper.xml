@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="rsvBookMapper">
+	<resultMap type="ReservationBook" id="rsvBookResultMap">
+		<id property="rsvNo" column="RSV_NO"/>
+		<result property="bookNo" column="BOOK_NO"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="rsvDate" column="RSV_DATE"/>
+		<result property="rsvState" column="RSV_STATE"/>
+		<collection property="book" resultMap="bookResultMap"/>
+	</resultMap>
+	<resultMap type="Book" id="bookResultMap">
+		<id property="bookNo" column="BOOK_NO"/>
+		<result property="bookName" column="BOOK_NAME"/>
+		<result property="bookWriter" column="BOOK_WRITER"/>
+		<result property="bookSubject" column="BOOK_SUBJECT"/>
+		<result property="publisher" column="PUBLISHER"/>
+		<result property="bookYear" column="BOOK_YEAR"/>
+		<result property="callNo" column="CALL_NO"/>
+		<result property="isbn" column="ISBN"/>
+		<result property="bookCover" column="BOOK_COVER"/>
+		<result property="theme" column="THEME"/>
+		<result property="bookState" column="BOOK_STATE"/>
+		<result property="updateDate" column="UPDATE_DATE"/>
+		<result property="lendingCount" column="LENDING_COUNT"/>
+	</resultMap>
+	<resultMap type="Member" id="memberResultMap">
+		<id property="userId" column="USER_ID"></id>
+		<result property="userPwd" column="USER_PWD"></result>
+		<result property="userNo" column="USER_NO"></result>
+		<result property="userName" column="USER_NAME"></result>
+		<result property="userPhone" column="USER_PHONE"></result>
+		<result property="userType" column="USER_TYPE"></result>
+		<result property="userEmail" column="USER_EMAIL"></result>
+		<result property="studentId" column="STUDENT_ID"></result>
+		<result property="major" column="MAJOR"></result>
+		<result property="profilePic" column="PROFILE_PIC"></result>
+		<result property="annualFee" column="ANNUAL_FEE"></result>
+		<result property="payDate" column="PAY_DATE"></result>
+		<result property="enrollDate" column="ENROLL_DATE"></result>
+		<result property="passCheck" column="PASS_CHECK"></result>
+		<result property="approvalDate" column="APPROVAL_DATE"></result>
+		<result property="endDate" column="END_DATE"></result>
+		<result property="socialId" column="SOCIAL_ID"></result>
+		<result property="surveyCheck" column="SURVEY_CHECK"></result>
+		<result property="lendingCopy" column="LENDING_COPY"></result>
+		<collection property="reservationBook" resultMap="rsvBookResultMap"/>
+	</resultMap>
+	<!-- 도서 예약 추가 시, 중복 여부 확인 -->
+	<select id="addCheck" resultMap="rsvBookResultMap">
+		SELECT * FROM BOOK_RESERVATION WHERE BOOK_NO = #{ bookNo } AND USER_ID = #{ userId } AND RSV_STATE = '대기'
+	</select>
+	<!-- 도서 예약 알림 대상 조회 -->
+	<select id="selectNotice" resultMap="rsvBookResultMap">
+		SELECT * FROM BOOK_RESERVATION WHERE BOOK_NO = #{ bookNo } AND RSV_STATE = '대기'
+	</select>
+	<!-- 도서 예약 회원 정보 조회 -->
+	<select id="selectUserEmail" resultMap="memberResultMap">
+		SELECT * FROM USERS JOIN BOOK_RESERVATION USING (USER_ID) WHERE BOOK_NO = #{ bookNo } AND RSV_STATE = '대기'
+	</select>
+	<!-- 예약 도서 정보 조회 -->
+	<select id="selectRsvBookInfo" resultMap="rsvBookResultMap">
+		SELECT DISTINCT(BOOK_NAME) FROM BOOK_RESERVATION R JOIN BOOK USING (BOOK_NO) WHERE BOOK_NO = #{ bookNo }
+	</select>
+	<!-- 도서 예약 상태 변경 -->
+	<update id="updateRsvState">
+		UPDATE BOOK_RESERVATION SET RSV_STATE = '완료' WHERE BOOK_NO = #{ bookNo } AND RSV_STATE = '대기'
+	</update>
+	<select id="selectRsvCount" resultType="_int">
+		SELECT COUNT(*) FROM BOOK_RESERVATION WHERE BOOK_NO = #{ bookNo } AND RSV_STATE = '대기'
+	</select>
+	<!-- 도서 예약 목록 조회 -->
+	<select id="selectAllRsvBook" resultMap="rsvBookResultMap">
+		SELECT * FROM BOOK_RESERVATION JOIN BOOK USING (BOOK_NO) WHERE USER_ID = #{ userId }
+	</select>
+	<!-- 페이징 처리 -->
+	<select id="selectListCount" resultType="_int">
+		SELECT COUNT(*) FROM BOOK_RESERVATION JOIN BOOK USING (BOOK_NO) WHERE USER_ID = #{ userId }
+	</select>
+	<!-- 도서 예약 추가 -->
+	<insert id="insertRsv" parameterType="ReservationBook">
+		INSERT INTO BOOK_RESERVATION VALUES(SEQ_RSV_NO.NEXTVAL, #{ bookNo }, #{ userId }, DEFAULT, DEFAULT)
+	</insert>
+	<!-- 도서 예약 삭제 -->
+	<delete id="deleteRsv" parameterType="_int">
+		DELETE FROM BOOK_RESERVATION WHERE RSV_NO = #{ rsvNo }
+	</delete>
+	<delete id="deleteRsvList" parameterType="java.util.ArrayList">
+		DELETE FROM BOOK_RESERVATION WHERE RSV_NO IN (
+		<foreach collection="array" item="nums" index="index" separator=",">
+			${ nums }
+		</foreach>
+		)
+	</delete>
+</mapper>

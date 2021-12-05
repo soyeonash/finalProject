@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!-- 만약에 null로 데이터가 전달되었으면 빈칸이 아닌 NULL로 인식하도로 설정 -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.daol.library.member.domain.Member" alias="Member"/>
+		<typeAlias type="com.daol.library.notice.domain.Notice" alias="Notice"/>
+		<typeAlias type="com.daol.library.book.domain.Book" alias="Book"/>
+		<typeAlias type="com.daol.library.book.domain.Keyword" alias="Keyword"/>
+		<typeAlias type="com.daol.library.book.domain.Search" alias="Search"/>
+		<typeAlias type="com.daol.library.lendingBook.domain.LendingBook" alias="LendingBook"/>
+		<typeAlias type="com.daol.library.interestingBook.domain.InterestingBook" alias="InterestingBook"/>
+		<typeAlias type="com.daol.library.reservationBook.domain.ReservationBook" alias="ReservationBook"/>
+		<typeAlias type="com.daol.library.lendingBook.domain.Parcel" alias="Parcel"/>
+		<typeAlias type="com.daol.library.post.domain.Post" alias="Post"/>
+		<typeAlias type="com.daol.library.post.domain.Reply" alias="Reply"/>
+		<typeAlias type="com.daol.library.post.domain.PostReport" alias="PostReport"/>
+		<typeAlias type="com.daol.library.post.domain.ReplyReport" alias="ReplyReport"/>
+		<typeAlias type="com.daol.library.readingRoom.domain.ReadingRoom" alias="ReadingRoom"/>
+		<typeAlias type="com.daol.library.studyRoom.domain.StudyRoom" alias="StudyRoom"/>
+		<typeAlias type="com.daol.library.book.domain.WishBook" alias="WishBook"/>
+		<typeAlias type="com.daol.library.mypage.domain.Qna" alias="Qna"/>
+		<typeAlias type="com.daol.library.admin.domain.Status" alias="Status"/>
+		<typeAlias type="com.daol.library.taste.domain.TasteSurvey" alias="TasteSurvey"/>
+		<typeAlias type="com.daol.library.taste.domain.Taste" alias="Taste"/>
+		<typeAlias type="com.daol.library.admin.domain.Statistics" alias="Statistics"/>
+		<typeAlias type="com.daol.library.book.domain.Review" alias="Review"/>
+		<typeAlias type="com.daol.library.admin.domain.BookParcel" alias="BookParcel"/>
+
+	</typeAliases>
+	<mappers>
+		<mapper resource="mappers/user-mapper.xml"/>
+		<mapper resource="mappers/notice-mapper.xml"/>
+		<mapper resource="mappers/book-mapper.xml"/>
+		<mapper resource="mappers/lendingBook-mapper.xml"/>
+		<mapper resource="mappers/intBook-mapper.xml"/>
+		<mapper resource="mappers/rsvBook-mapper.xml"/>
+		<mapper resource="mappers/post-mapper.xml"/>
+		<mapper resource="mappers/readingRoom-mapper.xml"/>
+		<mapper resource="mappers/studyRoom-mapper.xml"/>
+		<mapper resource="mappers/mypage-mapper.xml"/>
+		<mapper resource="mappers/admin-mapper.xml"/>
+		<mapper resource="mappers/taste-mapper.xml"/>
+	</mappers>
+</configuration>

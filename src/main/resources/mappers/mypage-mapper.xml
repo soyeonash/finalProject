@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mypageMapper">
+	<!-- 회원정보 -->
+	<resultMap type="Member" id="memberResultMap">
+		<id property="userId" column="USER_ID"></id>
+		<result property="userPwd" column="USER_PWD"></result>
+		<result property="userNo" column="USER_NO"></result>
+		<result property="userName" column="USER_NAME"></result>
+		<result property="userPhone" column="USER_PHONE"></result>
+		<result property="userType" column="USER_TYPE"></result>
+		<result property="userEmail" column="USER_EMAIL"></result>
+		<result property="studentId" column="STUDENT_ID"></result>
+		<result property="major" column="MAJOR"></result>
+		<result property="profilePic" column="PROFILE_PIC"></result>
+		<result property="annualFee" column="ANNUAL_FEE"></result>
+		<result property="payDate" column="PAY_DATE"></result>
+		<result property="enrollDate" column="ENROLL_DATE"></result>
+		<result property="passCheck" column="PASS_CHECK"></result>
+		<result property="approvalDate" column="APPROVAL_DATE"></result>
+		<result property="endDate" column="END_DATE"></result>
+		<result property="socialId" column="SOCIAL_ID"></result>
+		<result property="surveyCheck" column="SURVEY_CHECK"></result>
+		<result property="lendingCopy" column="LENDING_COPY"></result>
+	</resultMap>
+	
+	<select id="selectMember" parameterType="Member" resultMap="memberResultMap">
+		SELECT * FROM USERS WHERE USER_ID = #{userId}
+	</select>
+	<select id="selectMemberOne" parameterType="string" resultMap="memberResultMap">
+		SELECT * FROM USERS WHERE USER_ID = #{userId}
+	</select>
+	<select id="checkPwdDup" parameterType="Member" resultType="_int">
+		<!-- 결과값 int -->
+		SELECT COUNT(*) FROM USERS WHERE USER_ID = #{userId} AND USER_PWD = #{userPwd }
+	</select>
+	<update id="updateMember" parameterType="Member">
+		UPDATE USERS SET USER_PWD = #{userPwd}, USER_EMAIL = #{userEmail}, USER_PHONE= #{userPhone}, PROFILE_PIC=#{profilePic} WHERE USER_ID = #{userId}
+	</update>
+	<update id="updatePayment" parameterType="Member">
+		UPDATE USERS SET ANNUAL_FEE = '납부', PAY_DATE = SYSDATE WHERE USER_ID = #{userId}
+	</update>
+	<delete id="deleteMember" parameterType="Member">
+		DELETE FROM USERS WHERE USER_ID = #{userId}
+	</delete>
+	
+	
+	<!-- 대출 현황 -->
+	<resultMap type="LendingBook" id="lendingBookResultMap">
+		<id property="lendingNo" column="LENDING_NO"/>
+		<result property="lendingDate" column="LENDING_DATE"/>
+		<result property="returnDate" column="RETURN_DATE"/>
+		<result property="extendCount" column="EXTEND_COUNT"/>
+		<result property="receive" column="RECEIVE"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="bookNo" column="BOOK_NO"/>
+		<result property="returnState" column="RETURN_STATE"/>
+	</resultMap>
+	<resultMap type="Book" id="bResultMap">
+		<id property="bookNo" column="BOOK_NO"/>
+		<result property="bookName" column="BOOK_NAME"/>
+		<result property="bookWriter" column="BOOK_WRITER"/>
+		<result property="bookSubject" column="BOOK_SUBJECT"/>
+		<result property="publisher" column="PUBLISHER"/>
+		<result property="bookYear" column="BOOK_YEAR"/>
+		<result property="callNo" column="CALL_NO"/>
+		<result property="isbn" column="ISBN"/>
+		<result property="bookCover" column="BOOK_COVER"/>
+		<result property="theme" column="THEME"/>
+		<result property="bookState" column="BOOK_STATE"/>
+		<result property="updateDate" column="UPDATE_DATE"/>
+		<result property="lendingCount" column="LENDING_COUNT"/>
+		<collection property="lendingBook" resultMap="lendingBookResultMap"/>
+		<collection property="review" resultMap="reviewResultMap"/>
+		<collection property="interestingBook" resultMap="intBookResultMap"/>
+	</resultMap>
+	
+	<select id="selectListCount" resultType="_int">
+		SELECT COUNT(*) FROM BOOK_LENDING WHERE USER_ID = #{userId}
+	</select>
+ 	<select id="selectAllLendingHistory" parameterType="string" resultMap="bResultMap">
+		SELECT B.BOOK_NO, B.BOOK_NAME, B.BOOK_WRITER, B.PUBLISHER, B.BOOK_YEAR, B.BOOK_COVER,  B.BOOK_STATE, L.LENDING_NO, L.LENDING_DATE, L.RETURN_DATE, L.RETURN_STATE, L.EXTEND_COUNT, L.USER_ID, R.REVIEW_NO, R.REVIEW_STAR, R.REVIEW_CONTENTS, R.REVIEW_DATE, R.REVIEW_STATUS
+		FROM BOOK B, BOOK_LENDING L, REVIEW R
+		WHERE B.BOOK_NO = L.BOOK_NO(+) AND L.BOOK_NO = R.BOOK_NO(+) AND L.USER_ID = #{userId} ORDER BY L.LENDING_DATE DESC
+	</select>  
+	
+	<update id="updateExtend" parameterType="_int">
+		UPDATE BOOK_LENDING SET RETURN_DATE = RETURN_DATE+7, EXTEND_COUNT = 1 WHERE LENDING_NO = #{lendingNo}
+	</update>
+	
+	
+	<!-- 별점 및 서평 -->
+	<resultMap type="Review" id="reviewResultMap">
+		<id property="reviewNo" column="REVIEW_NO"></id>
+		<result property="bookNo" column="BOOK_NO"/>
+		<result property="reviewStar" column="REVIEW_STAR"/>
+		<result property="reviewContents" column="REVIEW_CONTENTS"/>
+		<result property="reviewDate" column="REVIEW_DATE"/>
+		<result property="reviewStatus" column="REVIEW_STATUS"/>
+		<result property="userId" column="USER_ID"/>
+	</resultMap>
+
+	<select id="selectOneForDetail" resultMap="reviewResultMap">
+		SELECT * FROM REVIEW WHERE BOOK_NO = #{bookNo}
+	</select>
+	<insert id="insertReview" parameterType="Review">
+		INSERT INTO REVIEW VALUES(SEQ_REVIEWNUM.NEXTVAL,#{bookNo}, #{reviewStar}, #{reviewContents}, SYSDATE, 'Y', #{userId})
+	</insert>
+	<update id="updateReview" parameterType="Review">
+		UPDATE REVIEW SET REVIEW_STAR = #{reviewStar}, REVIEW_CONTENTS = #{reviewContents} WHERE USER_ID = #{userId} AND BOOK_NO = #{bookNo} 
+	</update>
+	<delete id="deleteReview" parameterType="Review">
+		DELETE FROM REVIEW WHERE USER_ID = #{userId} AND BOOK_NO = #{bookNo} 
+	</delete>
+	
+	
+	<!-- 희망도서 -->
+	<resultMap type="WishBook" id="wishbookResultMap">
+		<id property="applyNo" column="APPLY_NO"></id>
+		<result property="userId" column="USER_ID"/>
+		<result property="bookName" column="BOOK_NAME"/>
+		<result property="bookWriter" column="BOOK_WRITER"/>
+		<result property="publisher" column="PUBLISHER"/>
+		<result property="applyStatus" column="APPLY_STATUS"/>
+		<result property="applyDate" column="APPLY_DATE"/>
+	</resultMap>
+	<select id="selectWishListCount" resultType="_int">
+		SELECT COUNT(*) FROM WISH_BOOK WHERE USER_ID = #{userId}
+	</select>
+	<select id="selectWishList"  resultMap="wishbookResultMap">
+		SELECT * FROM WISH_BOOK WHERE USER_ID = #{userId} ORDER BY APPLY_DATE DESC
+	</select>
+	<insert id="insertWishbook" parameterType="WishBook">
+		INSERT INTO WISH_BOOK VALUES (SEQ_APPLYNUM.NEXTVAL, #{userId}, #{bookName}, #{bookWriter}, #{publisher}, DEFAULT, DEFAULT)
+	</insert>
+	
+	<!-- 관심도서  -->
+	<resultMap type="InterestingBook" id="intBookResultMap">
+		<id property="interestNo" column="INTEREST_NO"/>
+		<result property="bookNo" column="BOOK_NO"/>
+		<result property="userId" column="USER_ID"/>
+	</resultMap>
+
+	<select id="selectLikeListCount" resultType="_int">
+		SELECT COUNT(*) FROM INTERESTING_BOOK WHERE USER_ID = #{userId}
+	</select>
+	<select id="selectLikeList" parameterType="string" resultMap="bResultMap">
+		SELECT B.BOOK_NO, B.BOOK_NAME, B.BOOK_WRITER, B.PUBLISHER, B.BOOK_YEAR, B.BOOK_COVER, I.INTEREST_NO, I.USER_ID FROM BOOK B JOIN INTERESTING_BOOK I ON B.BOOK_NO = I.BOOK_NO WHERE USER_ID = #{userId}
+	</select>
+	
+	
+	<!-- 열람실  -->
+	<resultMap type="ReadingRoom" id="rRoomResultMap">
+		<id property="rReservationNo" column="R_RESERVATION_NO"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="rReservationDate" column="R_RESERVATION_DATE"/>
+		<result property="rReservationTime" column="R_RESERVATION_TIME"/>
+		<result property="seatNo" column="SEAT_NO"/>
+		<result property="count" column="COUNT"/>
+	</resultMap>
+	<select id="selectrListCount" resultType="_int">
+		SELECT COUNT(*) FROM WISH_BOOK WHERE USER_ID = #{userId}
+	</select>
+	<select id="selectReadingroomHistory" resultMap="rRoomResultMap">
+		SELECT * FROM READINGROOM WHERE USER_ID = #{userId} ORDER BY R_RESERVATION_DATE DESC
+ 	</select>
+	<delete id="deleteReadingRoom" parameterType="_int">
+		DELETE FROM READINGROOM WHERE R_RESERVATION_NO = #{rReservationNo}
+	</delete>
+	
+	
+	<!-- 스터디룸  -->
+	<resultMap type="StudyRoom" id="sRoomResultMap">
+		<id property="sReservationNo" column="S_RESERVATION_NO"/>
+		<result property="userId" column="USER_ID"/>
+		<result property="sReservationDate" column="S_RESERVATION_DATE"/>
+		<result property="sReservationTime" column="S_RESERVATION_TIME"/>
+		<result property="purpose" column="PURPOSE"/>
+		<result property="personnel" column="PERSONNEL"/>
+	</resultMap>
+	<select id="selectsListCount" resultType="_int">
+		SELECT COUNT(*) FROM WISH_BOOK WHERE USER_ID = #{userId}
+	</select>	
+	<select id="selectStudyroomHistory" resultMap="sRoomResultMap">
+		SELECT * FROM STUDYROOM WHERE USER_ID = #{userId} ORDER BY S_RESERVATION_DATE DESC
+ 	</select>
+	<delete id="deleteStudyRoom" parameterType="_int">
+		DELETE FROM STUDYROOM WHERE S_RESERVATION_NO = #{sReservationNo}
+	</delete>
+	
+	<!-- 문의사항 -->
+	<resultMap type="Qna" id="qnaResultMap">
+		<id property="qnaNo" column="QNA_NO"></id>
+		<result property="userId" column="USER_ID"></result>
+		<result property="replyState" column="REPLY_STATE"></result>
+		<result property="qnaTitle" column="QNA_TITLE"></result>
+		<result property="qnaContent" column="QNA_CONTENT"></result>
+		<result property="qnaWriteDate" column="QNA_WRITEDATE"></result>
+		<result property="replyContent" column="REPLY_CONTENT"></result>
+		<result property="replyWriteDate" column="REPLY_WRITEDATE"></result>
+		<result property="replyUserId" column="REPLY_USERID"></result>
+	</resultMap>
+	
+	<select id="selectAllQna" resultMap="qnaResultMap">
+		SELECT * FROM QNA WHERE USER_ID = #{userId} ORDER BY QNA_NO DESC
+	</select>
+	<select id="selectOneQna" resultMap="qnaResultMap">
+		SELECT * FROM QNA WHERE QNA_NO = #{qnaNo}
+	</select>
+	<insert id="insertQna" parameterType="Qna">
+		INSERT INTO QNA VALUES(SEQ_QNA.NEXTVAL,#{userId},DEFAULT,#{qnaTitle},#{qnaContent},DEFAULT,NULL,NULL,NULL)
+	</insert>
+	<delete id="deleteQna" parameterType="_int">
+		DELETE QNA WHERE QNA_NO = #{qnaNo}
+	</delete>
+	<update id="updateQna" parameterType="Qna">
+		UPDATE QNA SET QNA_TITLE = #{qnaTitle}, QNA_CONTENT = #{qnaContent} WHERE QNA_NO = #{qnaNo}
+	</update>
+</mapper>

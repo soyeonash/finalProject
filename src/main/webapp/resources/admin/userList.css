@@ -1,0 +1,173 @@
+@charset "UTF-8";
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+main {
+	padding-top: 190px;
+	padding-bottom: 100px;
+}
+
+.mainTitle {
+	font-size: 35px;
+	text-align: center;
+	margin-right: 39px
+}
+
+.Membership_MainContent {
+	width: 1100px;
+	margin-left: 331px;
+	text-align: center;
+}
+
+.table thead tr td{
+	font-weight:bold;
+}
+
+.table thead tr td:first-child{
+	width: 5%;
+}
+
+.table thead tr td:nth-child(2){
+	width:10%;
+}
+
+.userListPaging {
+	margin: auto;
+	margin-top: 35px;
+}
+
+.userSearchBar {
+	text-align: left;
+	margin-bottom: 25px;
+	margin-top: 25px;
+}
+
+.fas {
+	position: absolute;
+    left: 1391px;
+    top: 323px;
+}
+
+.waitingSort{
+	cursor: pointer;
+}
+
+.deleteCheck {
+	position: relative;
+    background-color: #7cace2;
+    border: 1px solid silver;
+    border-radius : 8px;
+    box-shadow: 3px 3px 8px 1px #eeeeee;
+    font-size: 15px;
+    color: #fff;
+    left: 43%;
+    padding: 15px;
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.deleteCheck:hover {
+	 background-color: #4972bc;
+ 	 color: white;
+	-webkit-transition: all 0.4s;
+  	-moz-transition: all 0.4s;
+	transition: all 0.4s;
+}
+
+.alert_div{
+     border:1px solid #333;
+     border-radius: 15px;
+     position: absolute;
+     top: 65%;
+     left:56%;
+     transform: translate(-50%,-50%);
+     height: 159px;
+     width: 439px;
+     padding: 10px;
+     background-color: #efefef;
+     text-align: center;
+     display: none;
+}
+
+.alert_div_con {
+	padding-top: 30px;
+}
+
+.alert_div_con > h4{
+	color: red;
+}
+
+.alertBtn {
+	position: absolute;
+    left: 90px;
+}
+
+.deleteBtn {
+	position: relative;
+    background-color: #ffffff;
+    border: 1px solid silver;
+    border-radius : 8px;
+    font-size: 15px;
+    color: #000;
+    left: 43%;
+    padding: 10px;
+    width: 65px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.cancleBtn {
+	position: relative;
+    background-color: #ffffff;
+    border: 1px solid silver;
+    border-radius : 8px;
+    font-size: 15px;
+    color: #000;
+    left: 43%;
+    padding: 10px;
+    width: 65px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.side {
+	width: 200px;
+	position: absolute;
+	left: 3%;
+	top: 25%;
+}
+
+.side ul li {
+	line-height: 50px;
+	text-align: center;
+	border: 1px solid rgb(181, 181, 181);
+	text-decoration: none;
+	list-style: none;
+	font-size: 1.5rem;
+	cursor: pointer;
+}
+
+.side ul li:first-child {
+	line-height: 80px;
+	font-weight: bold;
+	font-size: 2rem;
+	background-color: #5a5eb9;
+	color: #fff;
+	cursor: Default;
+}
+
+.side ul .lo:hover {
+	background-color: rgb(155, 158, 213);
+	color: #fff;
+	font-weight: bold;
+}
+
+.sideact {
+	background-color: rgb(155, 158, 213);
+	color: #fff;
+	font-weight: bold;
+}

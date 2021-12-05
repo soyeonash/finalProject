@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tasteMapper">
+	<!-- 책 정보 -->
+	<resultMap type="Book" id="bResultMap">
+		<id property="bookNo" column="BOOK_NO"/>
+		<result property="bookName" column="BOOK_NAME"/>
+		<result property="bookWriter" column="BOOK_WRITER"/>
+		<result property="bookSubject" column="BOOK_SUBJECT"/>
+		<result property="publisher" column="PUBLISHER"/>
+		<result property="bookYear" column="BOOK_YEAR"/>
+		<result property="callNo" column="CALL_NO"/>
+		<result property="isbn" column="ISBN"/>
+		<result property="bookCover" column="BOOK_COVER"/>
+		<result property="theme" column="THEME"/>
+		<result property="bookState" column="BOOK_STATE"/>
+		<result property="updateDate" column="UPDATE_DATE"/>
+		<result property="lendingCount" column="LENDING_COUNT"/>
+	</resultMap>
+	
+	<select id="selectSurveyList" resultMap="bResultMap">
+	 	SELECT * FROM(SELECT * FROM BOOK ORDER BY DBMS_RANDOM.VALUE) WHERE ROWNUM <![CDATA[<=100]]>
+ 	</select>
+ 	<!-- 취향별 도서 추천 -->
+	<select id="selectTaste1" resultMap="bResultMap">
+		SELECT * FROM(SELECT * FROM BOOK WHERE THEME = #{taste1} ORDER BY DBMS_RANDOM.VALUE) WHERE ROWNUM <![CDATA[<=10]]>
+	</select>
+	<select id="selectTaste2" resultMap="bResultMap">
+		SELECT * FROM(SELECT * FROM BOOK WHERE THEME = #{taste2} ORDER BY DBMS_RANDOM.VALUE) WHERE ROWNUM <![CDATA[<=10]]>
+	</select>
+	<select id="selectTaste3" resultMap="bResultMap">
+		SELECT * FROM(SELECT * FROM BOOK WHERE THEME = #{taste3} ORDER BY DBMS_RANDOM.VALUE) WHERE ROWNUM <![CDATA[<=10]]>
+	</select>
+	<!-- 전공별 도서 추천 -->
+	<select id="selectMajorBookList" resultMap="bResultMap">
+		SELECT * FROM (SELECT * FROM BOOK
+		<if test="major == '인문사회'.toString()">
+		WHERE BOOK_SUBJECT IN ('사회과학','언어','철학','종교','문학','역사')
+		</if>
+		<if test="major == '자연과학'.toString()">
+		WHERE BOOK_SUBJECT = '자연과학'
+		</if>
+		<if test="major == '공학'.toString()">
+		WHERE BOOK_SUBJECT = '기술과학'
+		</if>
+		<if test="major == '예체능'.toString()">
+		WHERE BOOK_SUBJECT = '예술'
+		</if>
+		<if test="major == '의학'.toString()">
+		WHERE BOOK_SUBJECT IN '철학'
+		</if>
+		ORDER BY DBMS_RANDOM.VALUE) WHERE ROWNUM <![CDATA[<=10]]>
+	</select>
+	
+	<!-- 취향 설문 -->
+	<resultMap type="Member" id="memberResultMap">
+		<id property="userId" column="USER_ID"></id>
+		<result property="userPwd" column="USER_PWD"></result>
+		<result property="userNo" column="USER_NO"></result>
+		<result property="userName" column="USER_NAME"></result>
+		<result property="userPhone" column="USER_PHONE"></result>
+		<result property="userType" column="USER_TYPE"></result>
+		<result property="userEmail" column="USER_EMAIL"></result>
+		<result property="studentId" column="STUDENT_ID"></result>
+		<result property="major" column="MAJOR"></result>
+		<result property="profilePic" column="PROFILE_PIC"></result>
+		<result property="annualFee" column="ANNUAL_FEE"></result>
+		<result property="payDate" column="PAY_DATE"></result>
+		<result property="enrollDate" column="ENROLL_DATE"></result>
+		<result property="passCheck" column="PASS_CHECK"></result>
+		<result property="approvalDate" column="APPROVAL_DATE"></result>
+		<result property="endDate" column="END_DATE"></result>
+		<result property="socialId" column="SOCIAL_ID"></result>
+		<result property="surveyCheck" column="SURVEY_CHECK"></result>
+		<result property="lendingCopy" column="LENDING_COPY"></result>
+	</resultMap>
+	<resultMap type="TasteSurvey" id="TasteSurveyResultMap">
+		<result property="userId" column="USER_ID"/>
+		<result property="bookNo" column="BOOK_NO"/>
+		<result property="bookName" column="BOOK_NAME"/>
+		<result property="bookRating" column="BOOK_RATING"/>
+		<result property="bookSubject" column="BOOK_SUBJECT"/>
+		<result property="theme" column="THEME"/>
+		<result property="surveyDate" column="SURVEY_DATE"/>
+		<collection property="book" resultMap="bResultMap"/>
+ 	</resultMap>
+ 	
+ 	<insert id="insertRating" parameterType="TasteSurvey">
+ 		INSERT INTO TASTE_SURVEY VALUES(#{userId}, #{bookNo}, #{bookName}, #{bookRating},#{bookSubject}, #{theme}, SYSDATE)
+ 	</insert>
+ 	
+ 	<update id="updateSurveyCheck" parameterType="string">
+ 		UPDATE USERS SET SURVEY_CHECK = 'Y' WHERE USER_ID = #{userId}
+ 	</update>
+ 	
+ 	<delete id="deleteRating" parameterType="string">
+ 		DELETE FROM TASTE_SURVEY WHERE USER_ID = #{userId}
+ 	</delete>
+ 	
+ 	<!-- 취향 분석 -->
+ 	<resultMap type="Taste" id="tasteResultMap">
+ 		<id property="userId" column="USER_ID"></id>
+		<result property="taste1" column="TASTE1"></result>
+		<result property="taste2" column="TASTE2"></result>
+		<result property="taste3" column="TASTE3"></result>
+		<collection property="tasteSurvey" resultMap="TasteSurveyResultMap"/>
+ 	</resultMap>
+ 	
+ 	<!-- 나의 취향 불러오기 -->
+	<select id="selectMyTaste" resultMap="tasteResultMap">
+		SELECT * FROM TASTE WHERE USER_ID = #{userId}
+	</select>
+ 	
+	<insert id="insertTaste" parameterType="Taste">	
+  		INSERT INTO TASTE(USER_ID, TASTE1, TASTE2, TASTE3) 
+			VALUES(
+			(SELECT USER_ID FROM (SELECT ROWNUM AS RNUM, THEME, USER_ID FROM(SELECT THEME, USER_ID FROM TASTE_SURVEY WHERE USER_ID = #{userId} GROUP BY THEME, USER_ID ORDER BY AVG(BOOK_RATING) DESC) )WHERE RNUM = 3),
+			(SELECT THEME FROM (SELECT ROWNUM AS RNUM, THEME, USER_ID FROM(SELECT THEME, USER_ID FROM TASTE_SURVEY WHERE USER_ID =#{userId} GROUP BY THEME, USER_ID ORDER BY AVG(BOOK_RATING) DESC) )WHERE RNUM = 1),
+			(SELECT THEME FROM (SELECT ROWNUM AS RNUM, THEME, USER_ID FROM(SELECT THEME, USER_ID FROM TASTE_SURVEY WHERE USER_ID =#{userId} GROUP BY THEME, USER_ID ORDER BY AVG(BOOK_RATING) DESC) )WHERE RNUM = 2),
+			(SELECT THEME FROM (SELECT ROWNUM AS RNUM, THEME, USER_ID FROM(SELECT THEME, USER_ID FROM TASTE_SURVEY WHERE USER_ID =#{userId} GROUP BY THEME, USER_ID ORDER BY AVG(BOOK_RATING) DESC) )WHERE RNUM = 3)
+			) 
+	</insert>
+</mapper>

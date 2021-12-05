@@ -1,0 +1,134 @@
+@charset "UTF-8";
+
+*{margin:0; padding:0;}
+
+main{
+    padding-top: 110px;
+}
+
+.studyRoomTitle {
+    height: 160px;
+    background: #eef4fb;
+    color: #233d92;
+}
+
+.studyRoomTitleOne {
+    position: relative;
+    bottom: 0px;
+    font-size: 30px;
+    margin: 0;
+    left: 300px;
+    top: 60px;
+    width: fit-content;
+    font-weight: bold;
+}
+
+.studyRoomTitleTwo {
+    position: relative;
+    bottom: 0px;
+    font-size: 25px;
+    margin: 0;
+    left: 300px;
+    top: 70px;
+    width: fit-content;
+}
+
+.rsv_title {
+    font-size: 20px;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+    font-weight: bold;
+}
+
+
+.rsv_form {
+	width : 400px;
+	height : 540px;
+	border : 1px solid silver;
+	border-radius: 8px;
+	box-shadow: 7px 7px 9px #e2e1e1;
+	display : block;
+	margin-top : 80px;
+	margin-bottom : 100px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.rsv_form_con{
+	width : 300px;
+	height : 310px;
+	margin : 40px;
+	margin-left : 60px;
+}
+
+.rsv_form_con > input{
+	width : 260px;
+	height: 20px;
+	border-top : none;
+	border-left : none;
+	border-right : none;
+	border-bottom : 2px solid black;
+	outline:none;
+	margin-bottom: 20px;
+}
+
+.reservationForm > p {
+	font-size : 15px;
+	left : 20px;
+	margin-bottom: 8px;
+}
+
+#reservationTime {
+	width : 185px;
+	height : 30px;
+	font-size : 16px;
+	text-align : center;
+	margin-bottom: 20px;
+}
+
+option:disabled {
+    color: #fff;
+    background-color: #e0e0e0;
+}
+
+.rsv_btn {
+	position: relative;
+    background-color: #7cace2;
+    border: 1px solid silver;
+    border-radius : 8px;
+    box-shadow: 3px 3px 8px 1px #eeeeee;
+    font-size: 18px;
+    color: #fff;
+    left: 32%;
+    padding: 15px;
+    width: 150px;
+    text-align: center;
+    cursor: pointer;
+}
+.rsv_btn:hover {
+	 background-color: #4972bc;
+ 	 color: white;
+	-webkit-transition: all 0.4s;
+  	-moz-transition: all 0.4s;
+	transition: all 0.4s;
+}
+
+.alert_div{
+     border:1px solid #333;
+     border-radius: 15px;
+     position: absolute;
+     top: 80%;
+     left:50%;
+     transform: translate(-50%,-50%);
+     height: 220px;
+     width: 450px;
+     padding: 10px;
+     background-color: #efefef;
+     text-align: center;
+     display: none;
+}
+
+.alert_div_con {
+	padding-top: 30px;
+}
